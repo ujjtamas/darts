@@ -1,0 +1,114 @@
+Gameplay:
+
+2 kinds of game scenarios.
+
+    Against computer:
+        Played in leg.
+        Player throws first with 3 darts.
+        Then computer throws 3 darts.
+        Next round starts.
+        First satisfying the winning conditions wins.
+            Winning condition depends on the selected game.
+        Next match computer starts.
+
+    Practice:
+        Player throws 3 darts.
+        No opponent player throws again.
+        First satisfying the winning conditions wins.
+            Winning condition depends on the selected game.
+
+Available games:
+    301,501,1001
+        with double-in, double-out options
+        bo3, bo5, bo7, ...
+    Cricket (?)
+
+Difficulty levels:
+    Beginner, Medium, Pro
+
+Properties:
+    Changeable difficulty level
+        Makes cursor more wobbly.
+        Increase uncertainty of precision of throws.
+        Opponent throws become more precise. (?)
+
+    Randomness in
+        Hitting the targeted area to mimic actual gameplay.
+        Bounce outs
+            Hitting the wire when close to it.
+            Hitting own dart when close to it.
+        Robin-Hoods
+
+    Statistics
+        Average score per darts.
+        Average score per 3 darts.
+        Highest checkout.
+        Ton+ checkouts.
+        Number of 180s, 140s, 100+.
+        Signaling possible 9 darter.
+
+    Zoom to area (?)
+        Depend on scores gained, The more one scores the more time one can zoom in, to mimic getting into a flow.
+        Zoom to a section of the board to make throws easier.
+            Section is the area around the cursor.
+        The more difficult the level is the less one can zoom in.
+
+    Easter Egg:
+        Have a fly fly in into the game area time-to-time, randomly.
+
+UI:
+    Central canvas containing the dart board.
+    Cursor controlled by the mouse.
+    Throw initiated upon click.
+    Zoom via space or right-click.
+    Elements outside the canvas contains the statistics.
+
+An actual gameplay FE:
+    Player starts with 3 darts.
+        Throws.
+        -1 dart in hand.
+        Dart hits the board.
+        Bounce outs calculated.
+        Mark if valid hit.
+            Update canvas accordingly.
+        Update statistics.
+        If no more darts left next players turn (or same player if practice game is selected)
+        If still has darts throw again.
+    Update round number if all players done in that round.
+    Leg ends if one of the players satisfy the winning conditions.
+
+An actual gameplay BE:
+    Player starts with 3 darts.
+        Throws.
+        -1 dart in hand.
+        Dart hits the board.
+            Get the pixel the cursor hit.
+            Calculate randomness in hit.
+        Bounce outs calculated.
+            Check for bounce outs.
+            Check wire hit, own dart hit.
+        Mark if valid hit.
+            Update canvas accordingly.
+        Update statistics.
+        If no more darts left next players turn (or same player if practice game is selected)
+        If still has darts throw again.
+    Update round number if all players done in that round.
+    Leg ends if one of the players satisfy the winning conditions.
+    Based on selected gameplay first winning the legs needed wins.
+
+    Input:
+        revert logic start, easy make it more difficult
+        wind when throwing the dart
+        make the target move ran
+        catch the element when hitting the target
+        start from static pic instead of coding it 
+
+
+    MVP:
+    board
+    to have players
+    select some games x01
+    gameplay
+    flavour in difficultiness (levels or wobblines, or wind)
+    add animation when hitting
+     

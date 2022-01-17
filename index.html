@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/stlye.css" />
+    <script src='js/victor.min.js'></script>
+    <script src="js/dartboard.js"></script>
+    
+
+    <title>Game on!</title>
+</head>
+<body onload='DartBoard().init();'>
+    <header></header>
+    <div id="container" class="container">
+        <div id="gameArea">
+            <div id="contentLeft" class="content">
+                <p>Something will come here</p>
+            </div>
+            
+            <div id="contentCenter" class="content">
+                <p>Canvas will be here</p>
+                <canvas id ="canvas" width="370" height="370"></canvas>
+            </div>
+            
+            <div id="contentRight" class="content">
+                <p>Stats may come here</p>
+            </div>
+        </div>
+    </div>
+    <footer></footer>
+    <script src="js/script.js"></script>
+</body>
+</html>

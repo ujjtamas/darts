@@ -1,0 +1,35 @@
+.container{
+    display: flex;
+    flex-direction: row;
+    margin: 0 auto 0 auto;
+    padding: 5px;
+    border: 1px solid black;
+    width: 800px;
+    height: 600px;
+    align-items: center;
+}
+
+#gameArea{
+    display: flex;
+    flex-direction: row;
+    border: 1px solid purple;
+    margin: 0 auto;
+}
+
+#contentLeft{
+    border: 1px solid red;
+}
+
+#contentCenter{
+    border: 1px solid green;
+}
+
+#contentRight{
+    border: 1px solid blue;
+}
+
+#canvas{
+    border: 2px dotted red;
+}
+
+/*----------------------*/
