@@ -73,13 +73,176 @@ dartBoard.L.double = dartBoard.L.singleOuterWire + dartBoard.ringWidthDTPx;
 dartBoard.L.doubleWire = dartBoard.L.double + dartBoard.wireWidthPx;
 dartBoard.L.out = dartBoard.diameterPX;
 
+class Game{
+	constructor(selectedGame,startingPlayer,nextPlayer){
+		this.selectedGame = selectedGame;
+		this.currentWinningCondition = '';
+		this.starting = startingPlayer;
+		this.currentLeg = 0;
+		this.currentRound = 0;
+		this.sameRound = true;
+		this.currentPlayer = this.starting;
+		this.nextPlayer = nextPlayer;
+		this.gameLength = [
+			{
+				'name' : 'Best of 5',
+				'code' : 'Bo5',
+				'win' : 3
+			},
+			{
+				'name' : 'Best of 7',
+				'code' : 'Bo7',
+				'win' : 4
+			},
+			{
+				'name' : 'Best of 9',
+				'code' : 'Bo9',
+				'win' : 5
+			},
+			{
+				'name' : 'Best of 11',
+				'code' : 'Bo11',
+				'win' : 6
+			},
+		];
+		this.games = [
+			{
+				'name' : '301',
+				'score' : 301,
+				'stepInCondition' : '', 
+				'winningCondition' : 'firstTo0',
+				'active' : true
+			},
+			{
+				'name' : '301 double out',
+				'score' : 301,
+				'stepInCondition' : '', 
+				'winningCondition' : 'firstTo0DoubleOut',
+				'active' : true
+			},
+			{
+				'name' : '301 double in, double out',
+				'score' : 301,
+				'stepInCondition' : 'doubleIn', 
+				'winningCondition' : 'firstTo0DoubleOut',
+				'active' : false
+			},
+			{
+				'name' : '501',
+				'score' : 501,
+				'stepInCondition' : '', 
+				'winningCondition' : 'firstTo0',
+				'active' : true
+			},
+			{
+				'name' : '501 double out',
+				'score' : 501,
+				'stepInCondition' : '', 
+				'winningCondition' : 'firstTo0DoubleOut',
+				'active' : true
+			},
+			{
+				'name' : '501 double in, double out',
+				'score' : 501,
+				'stepInCondition' : 'doubleIn', 
+				'winningCondition' : 'firstTo0DoubleOut',
+				'active' : false
+			},{
+				'name' : '1001',
+				'score' : 1001,
+				'stepInCondition' : '', 
+				'winningCondition' : 'firstTo0',
+				'active' : true
+			},
+			{
+				'name' : '1001 double out',
+				'score' : 1001,
+				'stepInCondition' : '', 
+				'winningCondition' : 'firstTo0DoubleOut',
+				'active' : true
+			},
+			{
+				'name' : '1001 double in, double out',
+				'score' : 1001,
+				'stepInCondition' : 'doubleIn', 
+				'winningCondition' : 'firstTo0DoubleOut',
+				'active' : false
+			}
+		]
+	}
+
+	updateCurrentPlayer(){
+		this.currentPlayer.resetCurrentDart();
+		let temp = this.currentPlayer;
+		this.currentPlayer = this.nextPlayer;
+		this.nextPlayer = temp;
+		console.log('swapped players');
+		this.updateRound();
+	}
+
+	//increase round only if both players thrown
+	updateRound(){
+		if(!this.sameRound){
+			this.currentRound++;
+		}
+		this.sameRound = !this.sameRound;
+	}
+
+	updateLeg(){
+		this.currentLeg++;
+	}
+
+	//Fetch the winning condition for the actual game
+	setWinningCondition(){
+		for(let i = 0;i < this.games.length; i++){
+			if(this.games[i].name.toString() === this.selectedGame.toString()){
+				this.currentWinningCondition = this.games[i].winningCondition;
+				console.log('winning condition found and set');
+			}
+		}
+	}
+
+	checkWinningCondition(){
+		if(this.currentWinningCondition == 'firstTo0'){
+			if(Number(this.currentPlayer.currentScore) === 0){
+				return true
+			}
+
+		}
+		
+		if(this.currentWinningCondition == 'firstTo0DoubleOut'){
+			let throws = this.currentPlayer.scores.length;
+			throws = throws > 0 ? --throws : throws;
+			if(Number(this.currentPlayer.currentScore) === 0 && this.currentPlayer.scores[throws].std.toString() === 'double'){
+				return true
+			}
+		}
+		return false;
+	}
+
+	newLeg(){
+		this.currentLeg++;
+		console.log('Newleg started');
+		//swap the starting players
+		if(this.startingPlayer === this.currentPlayer){
+			this.startingPlayer =  this.nextPlayer;
+			this.nextPlayer = this.currentPlayer;
+		}
+		else{
+			this.startingPlayer = this.currentPlayer;
+		}
+	}
+}
+
 class Player{
 	constructor(name){
 		this.name = name;
+		this.scores = [];
+		this.currentDart = 0;
+		this.dart = 0;
+		this.currentScore = 0;
+		this.legsWon = 0;
 	}
-
-	//Array of object for the scores, statistics will be calculated from this one.
-	scores = [];
 
 	//statistics
 	statistics = {
@@ -91,18 +254,88 @@ class Player{
 		'140s': 0,
 		'100+' : 0
 	}
-	
-	function storeScore(score){
-		this.score.push(score);
+
+	updateScores(section){
+		//update scores
+		this.scores.push(section);
 	}
 
-	function updateStatistics(){}
+	flushCurrentScores(){
+		this.scores = [];
+	}
+
+	updateCurrentDart(){
+		this.currentDart++;
+	}
+
+	updateDart(){
+		this.dart++;
+	}
+
+	resetCurrentDart(){
+		this.currentDart = 0;
+	}
+
+	//initializes starting score for player
+	setCurrentScore(selectedGame,games){
+		for(let i = 0; i<games.length; i++){
+			if(games[i].name.toString() === selectedGame.toString()){
+				this.currentScore = games[i].score;
+				this.currentScore = games[i].score;
+			}
+		}
+	}
+
+	//updates current score of player
+	updateCurrentScore(scores){
+		//If score is not busted
+		if(!scores.busted){
+			this.currentScore -= Number(scores.score);
+		}
+		
+		//if latest score is busted some of the last throws may need to be nullified.
+		if(scores.busted){
+			for(let i = this.scores.length-1; i >= 0;--i){
+				if(this.scores[i].round == game.currentRound && this.scores[i].leg == game.currentLeg){
+					console.log('need to remove: ');
+					console.log(this.scores[i]);
+					if(!this.scores[i].busted){
+						this.currentScore += Number(this.scores[i].score);
+					}
+				}
+				else{
+					break;
+				}
+			}
+		}
+	}
+
+	checkValidHit(score){
+		let resultToBe = this.currentScore - score.score;
+		if(resultToBe >= 0){
+			return true
+		}
+		return false
+	}
+
+	legWin(){
+		this.legsWon++;
+	}
+	updateStatistics(){}
 }
+
+	let player1 = new Player('Tamás');
+	let computer = new Player('Computer');
+	let game = new Game(501,player1,computer);
 
 //Initialize the game
 function init(){
+	player1.setCurrentScore('501',game.games);
+	computer.setCurrentScore('501',game.games);
+
+	game.setWinningCondition();
+	//game.setCurrentScore();
     canvas.addEventListener('mousedown',throwDart, false);
-    console.log(canvas);
     //DartBoard.init();
     return canvas;
 }
@@ -180,8 +413,63 @@ function getSection(l,degree){
 		}
 	}
 
-	section.score = section.section * section.factor;
-	console.log('hit: ' + JSON.stringify(section));
+	if(bounceOut(section)){
+		section.score = 0;
+	}
+	if(!bounceOut(section)){
+		section.score = section.section * section.factor;
+	}
+
+	//console.log('hit: ' + JSON.stringify(section));
+	gamePlay(section);
+}
+
+//update gameplay
+function gamePlay(section){
+	section['leg'] = game.currentLeg;
+	section['round'] = game.currentRound;
+	section['dart'] = game.currentPlayer.dart;
+	
+	//check if the hit is valid and score does not go below 0 need to add double out option
+	let validHit = game.currentPlayer.checkValidHit(section);
+
+	if(!validHit){
+		section['busted'] = true;
+	}
+
+	if(validHit){
+		section['busted'] = false;
+	}
+
+		game.currentPlayer.updateScores(section);//update current score of player
+		game.currentPlayer.updateCurrentDart();//increase dart thrown by 1 for current player, reset every round
+		game.currentPlayer.updateDart();//increase dart thrown by 1 for current player, reset every leg
+		
+		game.currentPlayer.updateCurrentScore(section);
+		console.log('Leg: ' + game.currentLeg + ', Round: ' + game.currentRound + ' Score: ' + game.currentPlayer.currentScore +' Throw: ' + game.currentPlayer.currentDart + ' name: ' + game.currentPlayer.name + ' dart: ' + game.currentPlayer.dart);
+		let playerWon = game.checkWinningCondition();//check if player won
+
+		if(playerWon){
+			console.log('Win! Should start anext game if not yet won');
+			game.currentPlayer.legWin();
+			game.newLeg();
+		}
+
+		//Push player's scores to game scores
+		else if(game.currentPlayer.currentDart === 3 || section.busted){
+			game.updateCurrentPlayer();
+		}
+	}
+
+
+//Check if dart bounced out or not true means bounced out, false means valid hit
+function bounceOut(section){
+
+	if(section.std.indexOf('Wire') > -1){
+		return true
+	}
+
+	return false;
 }
 
 //Helper to get the relative position of the darts

@@ -112,3 +112,12 @@ An actual gameplay BE:
     flavour in difficultiness (levels or wobblines, or wind)
     add animation when hitting
      
+     Throw the dart:
+        check if no bounceout? (Store only?)
+            if no store
+            if yes, well store that as well. (as 'bounceOut')
+            update statistics
+        3 darts thrown
+            update statistics
+            next player
+
