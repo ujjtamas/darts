@@ -77,11 +77,11 @@ class Game{
 	constructor(selectedGame,startingPlayer,nextPlayer){
 		this.selectedGame = selectedGame;
 		this.currentWinningCondition = '';
-		this.starting = startingPlayer;
+		this.startingPlayer = startingPlayer;
 		this.currentLeg = 0;
 		this.currentRound = 0;
 		this.sameRound = true;
-		this.currentPlayer = this.starting;
+		this.currentPlayer = this.startingPlayer;
 		this.nextPlayer = nextPlayer;
 		this.gameLength = [
 			{
@@ -227,10 +227,15 @@ class Game{
 		if(this.startingPlayer === this.currentPlayer){
 			this.startingPlayer =  this.nextPlayer;
 			this.nextPlayer = this.currentPlayer;
+			this.currentPlayer = this.startingPlayer;
 		}
 		else{
 			this.startingPlayer = this.currentPlayer;
 		}
+		
+		this.startingPlayer.init(this.selectedGame,this.games);
+		this.nextPlayer.init(this.selectedGame,this.games);
+		console.log('new starter ' + this.startingPlayer.name + ' new current: ' + this.currentPlayer.name + ' new next ' + this.nextPlayer.name); 
 	}
 }
 
@@ -277,14 +282,14 @@ class Player{
 	}
 
 	//initializes starting score for player
-	setCurrentScore(selectedGame,games){
+	/*setCurrentScore(selectedGame,games){
 		for(let i = 0; i<games.length; i++){
 			if(games[i].name.toString() === selectedGame.toString()){
 				this.currentScore = games[i].score;
 				this.currentScore = games[i].score;
 			}
 		}
-	}
+	}*/
 
 	//updates current score of player
 	updateCurrentScore(scores){
@@ -321,6 +326,19 @@ class Player{
 	legWin(){
 		this.legsWon++;
 	}
+
+	init(selectedGame,games){
+		this.currentDart = 0;
+		this.dart = 0;
+		this.currentScore = 0;
+		for(let i = 0; i<games.length; i++){
+			if(games[i].name.toString() === selectedGame.toString()){
+				this.currentScore = games[i].score;
+				this.currentScore = games[i].score;
+			}
+		}
+	}
+
 	updateStatistics(){}
 }
 
@@ -330,8 +348,8 @@ class Player{
 
 //Initialize the game
 function init(){
-	player1.setCurrentScore('501',game.games);
-	computer.setCurrentScore('501',game.games);
+	player1.init('501',game.games);
+	computer.init('501',game.games);
 
 	game.setWinningCondition();
 	//game.setCurrentScore();
@@ -454,13 +472,11 @@ function gamePlay(section){
 			game.currentPlayer.legWin();
 			game.newLeg();
 		}
-
 		//Push player's scores to game scores
 		else if(game.currentPlayer.currentDart === 3 || section.busted){
 			game.updateCurrentPlayer();
 		}
 	}
-
 
 //Check if dart bounced out or not true means bounced out, false means valid hit
 function bounceOut(section){
@@ -499,6 +515,7 @@ function getPosition(event){
 	return coords;
 }
 
+//Translate the x coordinates to cartesian centered
 function translateX(x) {
 	var canvas = document.getElementById('canvas');
 	x -= Math.floor(canvas.width/2);
@@ -514,8 +531,5 @@ function translateY(y) {
 	y *= scaleFactor;
 	return y;
 }
-
-
-//Drawing
 
 init();
