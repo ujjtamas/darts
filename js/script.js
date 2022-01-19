@@ -168,112 +168,152 @@ const availableGameLength = [
 	},
 ];
 
+const availableGameDifficulty =[
+	{
+		'name' : 'hard',
+		'id' : 'h',
+		'factor' : 0.4
+	},
+	{
+		'name' : 'medium',
+		'id' : 'm',
+		'factor' : 0.2
+	},
+	{
+		'name' : 'easy',
+		'id' : 'e',
+		'factor' : 2
+	},
+];
+
+//Initialized framesize for difficulty, the bigger the number the easier the game, finetune with availableGameDifficulty
+const frameSizeForComputer = 15;
+
+//Center points for computer throws, always have it decremental order by score field
+const centerPoints = [
+	{
+		'score' : 80,
+		'xSO' : 0,
+		'ySO' : 85,
+		'xDO' : 0,
+		'yDO' : 85
+	},
+	{
+		'score' : 60,
+		'xSO' : 0,
+		'ySO' : 108,
+		'xDO' : 0,
+		'yDO' : 108
+	},
+	{
+		'score' : 40,
+		'xSO' : 0,
+		'ySO' : 108,
+		'xDO' : 0,
+		'yDO' : 135
+	},
+	{
+		'score' : 30,
+		'xSO' : 0,
+		'ySO' : 108,
+		'xDO' : 107,
+		'yDO' : -76
+	},
+	{
+		'score' : 20,
+		'xSO' : 0,
+		'ySO' : 108,
+		'xDO' : 127,
+		'yDO' : -38
+	},
+	{
+		'score' : 10,
+		'xSO' : 107,
+		'ySO' : -36,
+		'xDO' : -41,
+		'yDO' : 128
+	},
+	{
+		'score' : 9,
+		'xSO' : -91,
+		'ySO' :  66,
+		'xDO' : 36,
+		'yDO' : 108
+	},
+	{
+		'score' : 8,
+		'xSO' : -97,
+		'ySO' : -32,
+		'xDO' : 108,
+		'yDO' : 80
+	},
+	{
+		'score' : 7,
+		'xSO' : -60,
+		'ySO' : -87,
+		'xDO' : 1,
+		'yDO' : -106
+	},
+	{
+		'score' : 6,
+		'xSO' : 110,	
+		'ySO' : 1,
+		'xDO' : -1,
+		'yDO' : 132
+	},
+	{
+		'score' : 5,
+		'xSO' : -36,
+		'ySO' : 102,
+		'xDO' : 32,
+		'yDO' : 107
+	},
+	{
+		'score' : 4,
+		'xSO' : 88,
+		'ySO' : 63,
+		'xDO' : 81,
+		'yDO' : -107
+	},
+	{
+		'score' : 3,
+		'xSO' : -1,
+		'ySO' : -108,
+		'xDO' : 37,
+		'yDO' : 108
+	},
+	{
+		'score' : 2,
+		'xSO' : 61,
+		'ySO' : -85,
+		'xDO' : 83,
+		'yDO' : -106
+	},
+	{
+		'score' : 1,
+		'xSO' : 33,
+		'ySO' : 105,
+}
+]
+
 class Game{
-	constructor(selectedGame,selectedLength,startingPlayer,nextPlayer){
+	constructor(selectedGame,selectedLength,selectedDifficulty,startingPlayer,nextPlayer){
 		this.selectedGame = selectedGame;
 		this.selectedGameMaxScore = 0;
 		this.selectedLengthCode = selectedLength;
+		this.selectedDifficulty = selectedDifficulty;
+		this.selectedDifficultyFactor = 0;
 		this.currentWinningConditionLeg = '';
 		this.currentWinningConditionGame = 0;
 		this.startingPlayer = startingPlayer;
-		this.currentLeg = 0;
-		this.currentRound = 0;
+		this.currentLeg = 1;
+		this.currentRound = 1;
 		this.sameRound = true;
 		this.currentPlayer = this.startingPlayer;
 		this.nextPlayer = nextPlayer;
 		this.games = availableGames;
 		this.gameLength = availableGameLength;
-		/*this.gameLength = [
-			{
-				'name' : 'Best of 3',
-				'code' : 'Bo3',
-				'win' : 2
-			},
-			{
-				'name' : 'Best of 5',
-				'code' : 'Bo5',
-				'win' : 3
-			},
-			{
-				'name' : 'Best of 7',
-				'code' : 'Bo7',
-				'win' : 4
-			},
-			{
-				'name' : 'Best of 9',
-				'code' : 'Bo9',
-				'win' : 5
-			},
-			{
-				'name' : 'Best of 11',
-				'code' : 'Bo11',
-				'win' : 6
-			},
-		];*/
-		/*this.games = [
-			{
-				'name' : '301',
-				'score' : 301,
-				'stepInCondition' : '', 
-				'winningCondition' : 'firstTo0',
-				'active' : true
-			},
-			{
-				'name' : '301 double out',
-				'score' : 301,
-				'stepInCondition' : '', 
-				'winningCondition' : 'firstTo0DoubleOut',
-				'active' : true
-			},
-			{
-				'name' : '301 double in, double out',
-				'score' : 301,
-				'stepInCondition' : 'doubleIn', 
-				'winningCondition' : 'firstTo0DoubleOut',
-				'active' : false
-			},
-			{
-				'name' : '501',
-				'score' : 501,
-				'stepInCondition' : '', 
-				'winningCondition' : 'firstTo0',
-				'active' : true
-			},
-			{
-				'name' : '501 double out',
-				'score' : 501,
-				'stepInCondition' : '', 
-				'winningCondition' : 'firstTo0DoubleOut',
-				'active' : true
-			},
-			{
-				'name' : '501 double in, double out',
-				'score' : 501,
-				'stepInCondition' : 'doubleIn', 
-				'winningCondition' : 'firstTo0DoubleOut',
-				'active' : false
-			},{
-				'name' : '1001',
-				'score' : 1001,
-				'stepInCondition' : '', 
-				'winningCondition' : 'firstTo0',
-				'active' : true
-			},
-			{
-				'name' : '1001 double out',
-				'score' : 1001,
-				'stepInCondition' : '', 
-				'winningCondition' : 'firstTo0DoubleOut',
-				'active' : true
-			},
-			{
-				'name' : '1001 double in, double out',
-				'score' : 1001,
-				'stepInCondition' : 'doubleIn', 
-				'winningCondition' : 'firstTo0DoubleOut',
-				'active' : false
-			}
-		];*/
+		this.gameDifficulty = availableGameDifficulty;
 	}
 
 	updateCurrentPlayer(){
@@ -281,8 +321,13 @@ class Game{
 		let temp = this.currentPlayer;
 		this.currentPlayer = this.nextPlayer;
 		this.nextPlayer = temp;
-		console.log('swapped players');
+		this.currentPlayer.updateCurrentPlayerIndicator();
+		this.nextPlayer.updateCurrentPlayerIndicator();
+		//console.log('swapped players');
 		this.updateRound();
+		if(this.currentPlayer.id == 'computer'){
+			generateThrowsForComputer();
+		}
 	}
 
 	//increase round only if both players thrown
@@ -343,6 +388,7 @@ class Game{
 	//Starts a new leg, swaps starting player and initializes players with default variables
 	newLeg(){
 		this.currentLeg++;
+		this.currentRound = 0;
 		console.log('Newleg started');
 		//swap the starting players
 		if(this.startingPlayer === this.currentPlayer){
@@ -354,8 +400,8 @@ class Game{
 			this.startingPlayer = this.currentPlayer;
 		}
 		
-		this.startingPlayer.init(this.selectedGame,this.games);
-		this.nextPlayer.init(this.selectedGame,this.games);
+		this.startingPlayer.initScores(this.selectedGame,this.games);
+		this.nextPlayer.initScores(this.selectedGame,this.games);
 		//console.log('new starter ' + this.startingPlayer.name + ' new current: ' + this.currentPlayer.name + ' new next ' + this.nextPlayer.name); 
 	}
 
@@ -363,17 +409,26 @@ class Game{
 		for(let i = 0; i < this.games.length; i++){
 			if(this.selectedGame.toString() === this.games[i].name.toString()){
 				this.selectedGameMaxScore = Number(this.games[i].score);
-				console.log('max score set to ' + this.games[i].score);
 				break;
 			}
 		}
 		
+	}
+
+	setDifficultyScore(){
+		for(i in this.gameDifficulty){
+			if(this.gameDifficulty[i].name == this.selectedDifficulty){
+				this.selectedDifficultyFactor = Number(this.gameDifficulty[i].factor);
+				break;
+			}
+		}
 	}
 }
 
 class Player{
 	constructor(name){
 		this.name = name;
+		this.id = '';
 		this.scores = [];
 		this.currentDart = 0;
 		this.dart = 0;
@@ -461,13 +516,45 @@ class Player{
 		this.legsWon++;
 	}
 
-	init(selectedGame,games){
-		
+	initScores(){
 		this.currentDart = 0;
 		this.dart = 0;
 		this.currentScore = game.selectedGameMaxScore;
+
+		this.updateHTML(document.getElementById(this.id + 'Score'),this.currentScore);
+		this.updateHTML(document.getElementById(this.id + 'Leg'),this.legsWon);
+
+		//indicator whose turn is it
+		if(this == game.currentPlayer){
+			document.getElementById(this.id + 'CurrentPlayer').setAttribute('class','visible');
+		}
+		if(this == game.nextPlayer){
+			document.getElementById(this.id + 'CurrentPlayer').setAttribute('class','notVisible');
+		}
 	}
 
+	init(){
+		if(this.id === '' ){
+			this.id = this.name === 'Computer' ? 'computer' : 'player';
+		}
+		this.updateHTML(document.getElementById(this.id), this.name);
+		
+		this.initScores();
+	}
+
+	updateHTML(element,value){
+		element.value = value;
+		element.innerHTML = value;
+	}
+
+	updateCurrentPlayerIndicator(){
+		if(this == game.currentPlayer){
+			document.getElementById(this.id + 'CurrentPlayer').setAttribute('class','visible');
+		}
+		if(this == game.nextPlayer){
+			document.getElementById(this.id + 'CurrentPlayer').setAttribute('class','notVisible');
+		}
+	}
 	updateStatistics(){}
 }
 
@@ -475,8 +562,10 @@ class Player{
 function init(){
 	buildPlayer();
 	buildGame();
-	player1.init();
+	player.init();
+	//updateHTML(document.getElementById("playerScore"),player.currentScore);
 	computer.init();
+	//updateHTML(document.getElementById("computerScore"),computer.currentScore);
 
     canvas.addEventListener('mousedown',throwDart, false);
     return canvas;
@@ -485,7 +574,7 @@ function init(){
 //build players based on the input from user
 function buildPlayer(){
 	let playerName = document.getElementById('playerName');
-	player1 = new Player(playerName.value);
+	player = new Player(playerName.value);
 	computer = new Player('Computer');
 }
 
@@ -493,35 +582,37 @@ function buildPlayer(){
 function buildGame(){
 	let selectedGame = document.getElementById('games');
 	let selectedGameLength = document.getElementById('gameLength');
-	game = new Game(selectedGame.value,selectedGameLength.value,player1,computer);
+	let selectedGameDifficulty = document.getElementById('gameDifficulty');
+	game = new Game(selectedGame.value,selectedGameLength.value,selectedGameDifficulty.value,player,computer);
 	game.setStartingScore();
 	game.setWinningConditionLeg();
 	game.setWinningConditionGame();
+	game.setDifficultyScore();
 }
+
+
 
 //Build selectable options of games and length for user
 function buildOptions(){
 	let gamesElement = document.getElementById('games');
 	let gameLengthElement = document.getElementById('gameLength');
+	let gameDifficultyElement = document.getElementById('gameDifficulty');
 	
-	for(i in availableGames){
-		let child = document.createElement('option');
-		child.innerHTML = availableGames[i].name;
-		child.value = availableGames[i].name;
-		if(availableGames[i].name == '501'){
-			child.setAttribute('selected','selected');
-		}
-		gamesElement.appendChild(child);
-	}
+	buildOptionsHTML(availableGames,gamesElement,'option','name','name','501');
+	buildOptionsHTML(availableGameLength,gameLengthElement,'option','name','code','Best of 5');
+	buildOptionsHTML(availableGameDifficulty,gameDifficultyElement,'option','name','name','easy');
+}
 
-	for(i in availableGameLength){
-		let child = document.createElement('option');
-		child.innerHTML = availableGameLength[i].name;
-		child.value = availableGameLength[i].code;
-		if(availableGameLength[i].name == 'Best of 5'){
+//Helmper for buildOptions function to build the options for the lists
+function buildOptionsHTML(array,parent,elementToAdd,innerHTMLValue,valueValue,selected){
+	for (i in array){
+		let child = document.createElement(elementToAdd);
+		child.innerHTML = array[i][innerHTMLValue];
+		child.value = array[i][valueValue];
+		if(array[i].name == selected){
 			child.setAttribute('selected','selected');
 		}
-		gameLengthElement.appendChild(child);
+		parent.appendChild(child);
 	}
 }
 
@@ -545,6 +636,44 @@ function throwDart(event){
 	convertCoordToLD(x,y)
 	/*degree = degree * 180/Math.PI;*/
     //console.log('x: ' + x + ' y: ' + y);
+}
+
+function generateThrowsForComputer(){
+	let selectedFrame =  frameSizeForComputer * game.selectedDifficultyFactor;
+
+	let centerPoint = getCenterPoint();
+
+	let randomXPoint = Math.random() * selectedFrame - selectedFrame/2
+	let randomYPoint = Math.random() * selectedFrame - selectedFrame/2
+	
+	randomXPoint += centerPoint.x;
+	randomYPoint += centerPoint.y;
+	setTimeout(convertCoordToLD(randomXPoint,randomYPoint),5000);
+}
+
+function getCenterPoint(){
+	let point ={
+		'x': 0,
+		'y': 0
+	}
+	
+	//Select point based on current score and if game is double out or single out
+	for(i in centerPoints){
+		if(game.currentPlayer.currentScore >= Number(centerPoints[i].score)){
+			if(game.currentWinningConditionLeg == 'firstTo0DoubleOut'){
+				point.x = centerPoints[i].xDO;
+				point.y = centerPoints[i].yDO;
+			}
+			
+			if(game.currentWinningConditionLeg == 'firstTo0'){
+				point.x = centerPoints[i].xSO;
+				point.y = centerPoints[i].ySO;
+			}
+			break;
+		}
+	}
+	
+	return point;
 }
 
 //Convert coordinates to relative distance (length) and degree to center point
@@ -641,7 +770,9 @@ function gamePlay(section){
 		game.currentPlayer.updateDart();//increase dart thrown by 1 for current player, reset every leg
 		
 		game.currentPlayer.updateCurrentScore(section);
-		console.log('Leg: ' + game.currentLeg + ', Round: ' + game.currentRound + ' Score: ' + game.currentPlayer.currentScore +' Throw: ' + game.currentPlayer.currentDart + ' name: ' + game.currentPlayer.name + ' dart: ' + game.currentPlayer.dart);
+		game.currentPlayer.updateHTML(document.getElementById(game.currentPlayer.id + "Score"),game.currentPlayer.currentScore);
+		//console.log('Leg: ' + game.currentLeg + ', Round: ' + game.currentRound + ' Score: ' + game.currentPlayer.currentScore +' Throw: ' + game.currentPlayer.currentDart + ' name: ' + game.currentPlayer.name + ' dart: ' + game.currentPlayer.dart);
+		
 		let playerWon = game.checkWinningConditionLeg();//check if player won
 
 		if(playerWon){
@@ -649,10 +780,14 @@ function gamePlay(section){
 			console.log(game.currentPlayer.name + ' win legs: ' + game.currentPlayer.legsWon);
 			game.checkWinningConditionGame();
 			game.newLeg();
+			
 		}
 		//Push player's scores to game scores
 		else if(game.currentPlayer.currentDart === 3 || section.busted){
 			game.updateCurrentPlayer();
+		}
+		else if(game.currentPlayer.id === 'computer'){
+			generateThrowsForComputer();
 		}
 	}
 

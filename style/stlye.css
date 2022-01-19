@@ -18,6 +18,7 @@
 
 #contentLeft{
     border: 1px solid red;
+    width: 8rem;
 }
 
 #contentCenter{
@@ -26,9 +27,16 @@
 
 #contentRight{
     border: 1px solid blue;
+    width: 8rem;
 }
 
 #canvas{
 }
 
+.notVisible{
+    display: none;
+}
+.visible{
+    display: inline;
+}
 /*----------------------*/
