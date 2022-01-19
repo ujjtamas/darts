@@ -648,7 +648,9 @@ function generateThrowsForComputer(){
 	
 	randomXPoint += centerPoint.x;
 	randomYPoint += centerPoint.y;
-	setTimeout(convertCoordToLD(randomXPoint,randomYPoint),5000);
+	setTimeout(function (){
+		convertCoordToLD(randomXPoint,randomYPoint)
+	},1000);
 }
 
 function getCenterPoint(){
