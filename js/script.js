@@ -73,17 +73,122 @@ dartBoard.L.double = dartBoard.L.singleOuterWire + dartBoard.ringWidthDTPx;
 dartBoard.L.doubleWire = dartBoard.L.double + dartBoard.wireWidthPx;
 dartBoard.L.out = dartBoard.diameterPX;
 
+//Available game options used in Game object and as select options for player
+const availableGames =[
+	{
+		'name' : '301',
+		'score' : 301,
+		'stepInCondition' : '', 
+		'winningCondition' : 'firstTo0',
+		'active' : true
+	},
+	{
+		'name' : '301 double out',
+		'score' : 301,
+		'stepInCondition' : '', 
+		'winningCondition' : 'firstTo0DoubleOut',
+		'active' : true
+	},
+	{
+		'name' : '301 double in, double out',
+		'score' : 301,
+		'stepInCondition' : 'doubleIn', 
+		'winningCondition' : 'firstTo0DoubleOut',
+		'active' : false
+	},
+	{
+		'name' : '501',
+		'score' : 501,
+		'stepInCondition' : '', 
+		'winningCondition' : 'firstTo0',
+		'active' : true
+	},
+	{
+		'name' : '501 double out',
+		'score' : 501,
+		'stepInCondition' : '', 
+		'winningCondition' : 'firstTo0DoubleOut',
+		'active' : true
+	},
+	{
+		'name' : '501 double in, double out',
+		'score' : 501,
+		'stepInCondition' : 'doubleIn', 
+		'winningCondition' : 'firstTo0DoubleOut',
+		'active' : false
+	},{
+		'name' : '1001',
+		'score' : 1001,
+		'stepInCondition' : '', 
+		'winningCondition' : 'firstTo0',
+		'active' : true
+	},
+	{
+		'name' : '1001 double out',
+		'score' : 1001,
+		'stepInCondition' : '', 
+		'winningCondition' : 'firstTo0DoubleOut',
+		'active' : true
+	},
+	{
+		'name' : '1001 double in, double out',
+		'score' : 1001,
+		'stepInCondition' : 'doubleIn', 
+		'winningCondition' : 'firstTo0DoubleOut',
+		'active' : false
+	}
+];
+
+//Available game length options used in Game object and as select options for player
+const availableGameLength = [
+	{
+		'name' : 'Best of 3',
+		'code' : 'Bo3',
+		'win' : 2
+	},
+	{
+		'name' : 'Best of 5',
+		'code' : 'Bo5',
+		'win' : 3
+	},
+	{
+		'name' : 'Best of 7',
+		'code' : 'Bo7',
+		'win' : 4
+	},
+	{
+		'name' : 'Best of 9',
+		'code' : 'Bo9',
+		'win' : 5
+	},
+	{
+		'name' : 'Best of 11',
+		'code' : 'Bo11',
+		'win' : 6
+	},
+];
+
 class Game{
-	constructor(selectedGame,startingPlayer,nextPlayer){
+	constructor(selectedGame,selectedLength,startingPlayer,nextPlayer){
 		this.selectedGame = selectedGame;
-		this.currentWinningCondition = '';
+		this.selectedGameMaxScore = 0;
+		this.selectedLengthCode = selectedLength;
+		this.currentWinningConditionLeg = '';
+		this.currentWinningConditionGame = 0;
 		this.startingPlayer = startingPlayer;
 		this.currentLeg = 0;
 		this.currentRound = 0;
 		this.sameRound = true;
 		this.currentPlayer = this.startingPlayer;
 		this.nextPlayer = nextPlayer;
-		this.gameLength = [
+		this.games = availableGames;
+		this.gameLength = availableGameLength;
+		/*this.gameLength = [
+			{
+				'name' : 'Best of 3',
+				'code' : 'Bo3',
+				'win' : 2
+			},
 			{
 				'name' : 'Best of 5',
 				'code' : 'Bo5',
@@ -104,8 +209,8 @@ class Game{
 				'code' : 'Bo11',
 				'win' : 6
 			},
-		];
-		this.games = [
+		];*/
+		/*this.games = [
 			{
 				'name' : '301',
 				'score' : 301,
@@ -168,7 +273,7 @@ class Game{
 				'winningCondition' : 'firstTo0DoubleOut',
 				'active' : false
 			}
-		]
+		];*/
 	}
 
 	updateCurrentPlayer(){
@@ -193,24 +298,33 @@ class Game{
 	}
 
 	//Fetch the winning condition for the actual game
-	setWinningCondition(){
+	setWinningConditionLeg(){
 		for(let i = 0;i < this.games.length; i++){
 			if(this.games[i].name.toString() === this.selectedGame.toString()){
-				this.currentWinningCondition = this.games[i].winningCondition;
-				console.log('winning condition found and set');
+				this.currentWinningConditionLeg = this.games[i].winningCondition;
+				console.log('Leg winning condition found and set');
 			}
 		}
 	}
 
-	checkWinningCondition(){
-		if(this.currentWinningCondition == 'firstTo0'){
+	setWinningConditionGame(){
+		for(let i = 0;i < this.gameLength.length; i++){
+			if(this.gameLength[i].code.toString() === this.selectedLengthCode.toString()){
+				this.currentWinningConditionGame = Number(this.gameLength[i].win);
+				console.log('Game winning condition found and set');
+			}
+		}
+	}
+
+	checkWinningConditionLeg(){
+		if(this.currentWinningConditionLeg == 'firstTo0'){
 			if(Number(this.currentPlayer.currentScore) === 0){
 				return true
 			}
 
 		}
 		
-		if(this.currentWinningCondition == 'firstTo0DoubleOut'){
+		if(this.currentWinningConditionLeg == 'firstTo0DoubleOut'){
 			let throws = this.currentPlayer.scores.length;
 			throws = throws > 0 ? --throws : throws;
 			if(Number(this.currentPlayer.currentScore) === 0 && this.currentPlayer.scores[throws].std.toString() === 'double'){
@@ -219,7 +333,14 @@ class Game{
 		}
 		return false;
 	}
+	
+	checkWinningConditionGame(){
+		if(Number(game.currentPlayer.legsWon) === Number(this.currentWinningConditionGame)){
+			console.log(game.currentPlayer.name + ' won the game');
+		}
+	}
 
+	//Starts a new leg, swaps starting player and initializes players with default variables
 	newLeg(){
 		this.currentLeg++;
 		console.log('Newleg started');
@@ -235,7 +356,18 @@ class Game{
 		
 		this.startingPlayer.init(this.selectedGame,this.games);
 		this.nextPlayer.init(this.selectedGame,this.games);
-		console.log('new starter ' + this.startingPlayer.name + ' new current: ' + this.currentPlayer.name + ' new next ' + this.nextPlayer.name); 
+		//console.log('new starter ' + this.startingPlayer.name + ' new current: ' + this.currentPlayer.name + ' new next ' + this.nextPlayer.name); 
+	}
+
+	setStartingScore(){
+		for(let i = 0; i < this.games.length; i++){
+			if(this.selectedGame.toString() === this.games[i].name.toString()){
+				this.selectedGameMaxScore = Number(this.games[i].score);
+				console.log('max score set to ' + this.games[i].score);
+				break;
+			}
+		}
+		
 	}
 }
 
@@ -281,16 +413,6 @@ class Player{
 		this.currentDart = 0;
 	}
 
-	//initializes starting score for player
-	/*setCurrentScore(selectedGame,games){
-		for(let i = 0; i<games.length; i++){
-			if(games[i].name.toString() === selectedGame.toString()){
-				this.currentScore = games[i].score;
-				this.currentScore = games[i].score;
-			}
-		}
-	}*/
-
 	//updates current score of player
 	updateCurrentScore(scores){
 		//If score is not busted
@@ -302,8 +424,6 @@ class Player{
 		if(scores.busted){
 			for(let i = this.scores.length-1; i >= 0;--i){
 				if(this.scores[i].round == game.currentRound && this.scores[i].leg == game.currentLeg){
-					console.log('need to remove: ');
-					console.log(this.scores[i]);
 					if(!this.scores[i].busted){
 						this.currentScore += Number(this.scores[i].score);
 					}
@@ -318,9 +438,23 @@ class Player{
 	checkValidHit(score){
 		let resultToBe = this.currentScore - score.score;
 		if(resultToBe >= 0){
-			return true
+			//check for double out option
+			if(game.selectedGame.toString().indexOf('double out') > -1){
+				//check if last throw was double
+				if(resultToBe === 0){
+					if(score.std.toString() === 'double'){
+						return true;
+					}
+					return false;
+				}
+				//cannot leave 1 score if double out is the option
+				if(resultToBe === 1){
+					return false;
+				}
+			}
+			return true;
 		}
-		return false
+		return false;
 	}
 
 	legWin(){
@@ -328,36 +462,79 @@ class Player{
 	}
 
 	init(selectedGame,games){
+		
 		this.currentDart = 0;
 		this.dart = 0;
-		this.currentScore = 0;
-		for(let i = 0; i<games.length; i++){
-			if(games[i].name.toString() === selectedGame.toString()){
-				this.currentScore = games[i].score;
-				this.currentScore = games[i].score;
-			}
-		}
+		this.currentScore = game.selectedGameMaxScore;
 	}
 
 	updateStatistics(){}
 }
 
-	let player1 = new Player('Tamás');
-	let computer = new Player('Computer');
-	let game = new Game(501,player1,computer);
-
 //Initialize the game
 function init(){
-	player1.init('501',game.games);
-	computer.init('501',game.games);
+	buildPlayer();
+	buildGame();
+	player1.init();
+	computer.init();
 
-	game.setWinningCondition();
-	//game.setCurrentScore();
     canvas.addEventListener('mousedown',throwDart, false);
-    //DartBoard.init();
     return canvas;
 }
 
+//build players based on the input from user
+function buildPlayer(){
+	let playerName = document.getElementById('playerName');
+	player1 = new Player(playerName.value);
+	computer = new Player('Computer');
+}
+
+//build the game based on the input from user
+function buildGame(){
+	let selectedGame = document.getElementById('games');
+	let selectedGameLength = document.getElementById('gameLength');
+	game = new Game(selectedGame.value,selectedGameLength.value,player1,computer);
+	game.setStartingScore();
+	game.setWinningConditionLeg();
+	game.setWinningConditionGame();
+}
+
+//Build selectable options of games and length for user
+function buildOptions(){
+	let gamesElement = document.getElementById('games');
+	let gameLengthElement = document.getElementById('gameLength');
+	
+	for(i in availableGames){
+		let child = document.createElement('option');
+		child.innerHTML = availableGames[i].name;
+		child.value = availableGames[i].name;
+		if(availableGames[i].name == '501'){
+			child.setAttribute('selected','selected');
+		}
+		gamesElement.appendChild(child);
+	}
+
+	for(i in availableGameLength){
+		let child = document.createElement('option');
+		child.innerHTML = availableGameLength[i].name;
+		child.value = availableGameLength[i].code;
+		if(availableGameLength[i].name == 'Best of 5'){
+			child.setAttribute('selected','selected');
+		}
+		gameLengthElement.appendChild(child);
+	}
+}
+
+//Check if name field is filled out
+function checkFields(){
+	let nameField = document.getElementById('playerName');
+	if(nameField.value == ''){
+		alert('Please fill out the name field');
+	}
+	else{
+		init();
+	}
+}
 //Get the coordinates of the dart relative to center point of canvas
 function throwDart(event){
     
@@ -465,11 +642,12 @@ function gamePlay(section){
 		
 		game.currentPlayer.updateCurrentScore(section);
 		console.log('Leg: ' + game.currentLeg + ', Round: ' + game.currentRound + ' Score: ' + game.currentPlayer.currentScore +' Throw: ' + game.currentPlayer.currentDart + ' name: ' + game.currentPlayer.name + ' dart: ' + game.currentPlayer.dart);
-		let playerWon = game.checkWinningCondition();//check if player won
+		let playerWon = game.checkWinningConditionLeg();//check if player won
 
 		if(playerWon){
-			console.log('Win! Should start anext game if not yet won');
 			game.currentPlayer.legWin();
+			console.log(game.currentPlayer.name + ' win legs: ' + game.currentPlayer.legsWon);
+			game.checkWinningConditionGame();
 			game.newLeg();
 		}
 		//Push player's scores to game scores
@@ -500,7 +678,7 @@ function getPosition(event){
 	x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
 	y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
 	
-	console.log(document.body.scrollLeft);
+	//console.log(document.body.scrollLeft);
 	
 	//Get default canvas location 
 	x -= canvas.offsetLeft;
@@ -532,4 +710,5 @@ function translateY(y) {
 	return y;
 }
 
-init();
+//init();
+buildOptions();
