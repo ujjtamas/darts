@@ -89,13 +89,13 @@ const availableGames =[
 		'winningCondition' : 'firstTo0DoubleOut',
 		'active' : true
 	},
-	{
+	/*{
 		'name' : '301 double in, double out',
 		'score' : 301,
 		'stepInCondition' : 'doubleIn', 
 		'winningCondition' : 'firstTo0DoubleOut',
 		'active' : false
-	},
+	},*/
 	{
 		'name' : '501',
 		'score' : 501,
@@ -110,13 +110,14 @@ const availableGames =[
 		'winningCondition' : 'firstTo0DoubleOut',
 		'active' : true
 	},
-	{
+	/*{
 		'name' : '501 double in, double out',
 		'score' : 501,
 		'stepInCondition' : 'doubleIn', 
 		'winningCondition' : 'firstTo0DoubleOut',
 		'active' : false
-	},{
+	},*/
+	{
 		'name' : '1001',
 		'score' : 1001,
 		'stepInCondition' : '', 
@@ -129,14 +130,14 @@ const availableGames =[
 		'stepInCondition' : '', 
 		'winningCondition' : 'firstTo0DoubleOut',
 		'active' : true
-	},
-	{
+	}
+	/*{
 		'name' : '1001 double in, double out',
 		'score' : 1001,
 		'stepInCondition' : 'doubleIn', 
 		'winningCondition' : 'firstTo0DoubleOut',
 		'active' : false
-	}
+	}*/
 ];
 
 //Available game length options used in Game object and as select options for player
@@ -385,6 +386,9 @@ class Game{
 	checkWinningConditionGame(){
 		if(Number(game.currentPlayer.legsWon) === Number(this.currentWinningConditionGame)){
 			this.currentPlayer.updateHTML(document.getElementById(this.currentPlayer.id + 'Message'),this.currentPlayer.name + ' won the Game!');
+			this.nextPlayer.updateHTML(document.getElementById(this.nextPlayer.id + 'Leg'),0);
+			this.nextPlayer.initLeg();
+			this.currentPlayer.gameWin();
 		}
 	}
 
@@ -447,6 +451,7 @@ class Player{
 		this.dart = 0;
 		this.currentScore = 0;
 		this.legsWon = 0;
+		this.gamesWon = 0;
 	}
 
 	//statistics
@@ -525,9 +530,24 @@ class Player{
 		return false;
 	}
 
+	initLeg(){
+		this.legsWon = 0;
+	}
+
 	legWin(){
 		this.legsWon++;
 		this.updateHTML(document.getElementById(this.id + 'Message'),this.name + ' won the leg!');
+	}
+
+	gameWin(){
+		this.gamesWon++;
+		this.updateHTML(document.getElementById(this.id + 'Game'),this.gamesWon);
+		this.initGame();
+	}
+
+	initGame(){
+		this.legsWon = 0;
+		this.initScores();
 	}
 
 	initScores(){

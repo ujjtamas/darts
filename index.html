@@ -15,51 +15,59 @@
     <div id="container" class="container">
         <div id="gameOption">
             <div>
-                <span>
-                    <label for="playerName">Name:</label>
-                    <input type="text" id="playerName" size="10"/>
-                </span>
-                <span>
-                    <label for="games">Games:</label>
-                    <select name="games" id="games"></select>
-                </span>
+                <div class="design">
+                    <label for="playerName">Name: </label>
+                    <input type="text" id="playerName" size="10" class="designIn"/>
+                </div>
+                <div class="design">
+                    <label for="games">Games: </label>
+                    <select name="games" id="games" class="designIn"></select>
+                </div>
             </div>
             
             <div>
-                <span>
-                    <label for="gameLength">Legs:</label>
-                    <select name="gameLength" id="gameLength"></select>
-                </span>
-                <span>
-                    <label for="gameDifficulty">Difficulty:</label>
-                    <select name="gameDifficulty" id="gameDifficulty"></select>
-                </span>
-                <span>
-                    <button id="start" onclick="checkFields()">Game on!</button>
-                </span>
+                <div class="design">
+                    <label for="gameLength">Legs: </label>
+                    <select name="gameLength" id="gameLength" class="designIn"></select>
+                </div>
+                <div class="design">
+                    <label for="gameDifficulty">Difficulty: </label>
+                    <select name="gameDifficulty" id="gameDifficulty" class="designIn"></select>
+                </div>
+                <div>
+                    <button id="start" onclick="checkFields()" class="design">Game on!</button>
+                </div>
             </div>
         </div>
         <div id="gameArea">
             <div id="contentLeft" class="content">
-                <span class="notVisible" id="playerCurrentPlayer">&#9654; </span><span id="player"></span>
+                <div class="design width80"></div>
+                <div id="playerInfo" class="design width80">
+                    <span class="notVisible" id="playerCurrentPlayer">&#9654; </span>
+                    <span id="player"></span>
+                </div>
                 <div id="playerScores">
-                    <div>
-                        <label for="playerScore">Score:</label>
+                    <div class="design width80">
+                        <label for="playerScore">Score: </label>
                         <span id="playerScore"></span>
                     </div>
-                    <div>
-                        <label for="playerThrow">Throw:</label>
+                    <div class="design width80">
+                        <label for="playerThrow">Throw: </label>
                         <span id="playerThrow"></span>
                     </div>
-                    <div>
-                        <label for=playerLeg">Legs:</label>
-                        <span id="playerLeg">0</span>
+                    <div class="design width80">
+                        <label for="playerGame">Games: </label>
+                        <span id="playerGame"></span>
                     </div>
-                    <div>
-                        <label for=playerDarts>Dart:</label>
+                    <div class="design width80">
+                        <label for="playerLeg">Legs: </label>
+                        <span id="playerLeg"></span>
+                    </div>
+                    <div class="design width80">
+                        <label for="playerDarts">Dart: </label>
                         <span id="playerDarts"></span>
                     </div>
-                    <div>
+                    <div class="design width80">
                         <label id="playerMessage"></label>
                     </div>
                 </div>
@@ -70,25 +78,33 @@
             </div>
             
             <div id="contentRight" class="content">
-                <span class="notVisible" id="computerCurrentPlayer">&#9654; </span><span id="computer"></span>
+                <div class="design width80"></div>
+                <div id="computerInfo" class="design width80">
+                    <span class="notVisible" id="computerCurrentPlayer">&#9654; </span>
+                    <span id="computer"></span>
+                </div>
                 <div id="computerScores">
-                    <div>
-                        <label for="computerScore">Score:</label>
+                    <div class="design width80">
+                        <label for="computerScore">Score: </label>
                         <span id="computerScore"></span>
                     </div>
-                    <div>
-                        <label for="computerThrow">Throw:</label>
+                    <div class="design width80">
+                        <label for="computerThrow">Throw: </label>
                         <span id="computerThrow"></span>
                     </div>
-                    <div>
-                        <label for=computerLeg">Legs:</label>
-                        <span id="computerLeg">0</span>
+                    <div class="design width80">
+                        <label for="computerGame">Games: </label>
+                        <span id="computerGame"></span>
                     </div>
-                    <div>
+                    <div class="design width80">
+                        <label for="computerLeg">Legs: </label>
+                        <span id="computerLeg"></span>
+                    </div>
+                    <div class="design width80">
                         <label for=computerDarts>Dart: </label>
                         <span id="computerDarts"></span>
                     </div>
-                    <div>
+                    <div class="design width80">
                         <label id="computerMessage"></label>
                     </div>
                 </div>
