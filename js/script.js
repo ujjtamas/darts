@@ -172,12 +172,12 @@ const availableGameDifficulty =[
 	{
 		'name' : 'hard',
 		'id' : 'h',
-		'factor' : 0.4
+		'factor' : 0.5
 	},
 	{
 		'name' : 'medium',
 		'id' : 'm',
-		'factor' : 0.2
+		'factor' : 1
 	},
 	{
 		'name' : 'easy',
@@ -188,6 +188,9 @@ const availableGameDifficulty =[
 
 //Initialized framesize for difficulty, the bigger the number the easier the game, finetune with availableGameDifficulty
 const frameSizeForComputer = 15;
+
+//Initialized framesize for difficulty, the bigger the number the more difficult the game, finetune with availableGameDifficulty
+const frameSizeForPlayer = 5;
 
 //Center points for computer throws, always have it decremental order by score field
 const centerPoints = [
@@ -381,7 +384,7 @@ class Game{
 	
 	checkWinningConditionGame(){
 		if(Number(game.currentPlayer.legsWon) === Number(this.currentWinningConditionGame)){
-			console.log(game.currentPlayer.name + ' won the game');
+			this.currentPlayer.updateHTML(document.getElementById(this.currentPlayer.id + 'Message'),this.currentPlayer.name + ' won the Game!');
 		}
 	}
 
@@ -389,7 +392,7 @@ class Game{
 	newLeg(){
 		this.currentLeg++;
 		this.currentRound = 0;
-		console.log('Newleg started');
+		console.log('New leg started');
 		//swap the starting players
 		if(this.startingPlayer === this.currentPlayer){
 			this.startingPlayer =  this.nextPlayer;
@@ -400,8 +403,19 @@ class Game{
 			this.startingPlayer = this.currentPlayer;
 		}
 		
+		setTimeout(function(){
+			game.currentPlayer.updateHTML(document.getElementById(game.currentPlayer.id + 'Message'),'');
+		},1000);
+		setTimeout(function(){
+			game.nextPlayer.updateHTML(document.getElementById(game.nextPlayer.id + 'Message'),'');
+		},1000);
+
 		this.startingPlayer.initScores(this.selectedGame,this.games);
 		this.nextPlayer.initScores(this.selectedGame,this.games);
+
+		if(this.currentPlayer.id == 'computer'){
+			generateThrowsForComputer();
+		}
 		//console.log('new starter ' + this.startingPlayer.name + ' new current: ' + this.currentPlayer.name + ' new next ' + this.nextPlayer.name); 
 	}
 
@@ -412,7 +426,6 @@ class Game{
 				break;
 			}
 		}
-		
 	}
 
 	setDifficultyScore(){
@@ -514,6 +527,7 @@ class Player{
 
 	legWin(){
 		this.legsWon++;
+		this.updateHTML(document.getElementById(this.id + 'Message'),this.name + ' won the leg!');
 	}
 
 	initScores(){
@@ -523,6 +537,8 @@ class Player{
 
 		this.updateHTML(document.getElementById(this.id + 'Score'),this.currentScore);
 		this.updateHTML(document.getElementById(this.id + 'Leg'),this.legsWon);
+		this.updateHTML(document.getElementById(this.id + 'Darts'),this.dart);
+		this.updateHTML(document.getElementById(this.id + 'Throw'),'');
 
 		//indicator whose turn is it
 		if(this == game.currentPlayer){
@@ -567,8 +583,8 @@ function init(){
 	computer.init();
 	//updateHTML(document.getElementById("computerScore"),computer.currentScore);
 
-    canvas.addEventListener('mousedown',throwDart, false);
-    return canvas;
+	canvas.addEventListener('mousedown',throwDart, false);
+	return canvas;
 }
 
 //build players based on the input from user
@@ -589,8 +605,6 @@ function buildGame(){
 	game.setWinningConditionGame();
 	game.setDifficultyScore();
 }
-
-
 
 //Build selectable options of games and length for user
 function buildOptions(){
@@ -626,18 +640,30 @@ function checkFields(){
 		init();
 	}
 }
+
 //Get the coordinates of the dart relative to center point of canvas
 function throwDart(event){
-    
-    let coords = getPosition(event);
-    let x = coords[0];
-    let y = coords[1];
+
+	let coords = getPosition(event);
+	let x = coords[0];
+	let y = coords[1];
 	
+	let offset = setOffsetForPlayer();
+
+	x += offset;
+	y+= offset;
 	convertCoordToLD(x,y)
-	/*degree = degree * 180/Math.PI;*/
-    //console.log('x: ' + x + ' y: ' + y);
 }
 
+//Adds random offest to player's throw to make it more diffcult
+function setOffsetForPlayer(){
+	let selectedFrame =  frameSizeForPlayer * 1/game.selectedDifficultyFactor;
+
+	let randomOffset = Math.random() *selectedFrame - selectedFrame/2;
+	return randomOffset;
+}
+
+//Generates throw for computer based on difficulty
 function generateThrowsForComputer(){
 	let selectedFrame =  frameSizeForComputer * game.selectedDifficultyFactor;
 
@@ -653,18 +679,25 @@ function generateThrowsForComputer(){
 	},1000);
 }
 
+//Gets the center point for the throw generated for the computer
 function getCenterPoint(){
 	let point ={
 		'x': 0,
 		'y': 0
 	}
 	
-	//Select point based on current score and if game is double out or single out
+	//Select point based on current score depend on if game is double out or single out
 	for(i in centerPoints){
 		if(game.currentPlayer.currentScore >= Number(centerPoints[i].score)){
 			if(game.currentWinningConditionLeg == 'firstTo0DoubleOut'){
 				point.x = centerPoints[i].xDO;
 				point.y = centerPoints[i].yDO;
+				//need to round the score first
+				if(game.currentPlayer.currentScore % 2 == 1 && i > 0){
+					let coordinatesFor1Score =  centerPoints.length-1;
+					point.x = centerPoints[coordinatesFor1Score].xSO;
+					point.y = centerPoints[coordinatesFor1Score].ySO;
+				}
 			}
 			
 			if(game.currentWinningConditionLeg == 'firstTo0'){
@@ -750,7 +783,7 @@ function getSection(l,degree){
 	gamePlay(section);
 }
 
-//update gameplay
+//update gameplay, core function of gameplay
 function gamePlay(section){
 	section['leg'] = game.currentLeg;
 	section['round'] = game.currentRound;
@@ -773,8 +806,12 @@ function gamePlay(section){
 		
 		game.currentPlayer.updateCurrentScore(section);
 		game.currentPlayer.updateHTML(document.getElementById(game.currentPlayer.id + "Score"),game.currentPlayer.currentScore);
-		//console.log('Leg: ' + game.currentLeg + ', Round: ' + game.currentRound + ' Score: ' + game.currentPlayer.currentScore +' Throw: ' + game.currentPlayer.currentDart + ' name: ' + game.currentPlayer.name + ' dart: ' + game.currentPlayer.dart);
+		game.currentPlayer.updateHTML(document.getElementById(game.currentPlayer.id + "Darts"),game.currentPlayer.dart);
 		
+		let updateValue = Number(section.score) == 0 ? section.std : section.score;
+		game.currentPlayer.updateHTML(document.getElementById(game.currentPlayer.id + "Throw"), updateValue);
+		//console.log('Leg: ' + game.currentLeg + ', Round: ' + game.currentRound + ' Score: ' + game.currentPlayer.currentScore +' Throw: ' + game.currentPlayer.currentDart + ' name: ' + game.currentPlayer.name + ' dart: ' + game.currentPlayer.dart);
+
 		let playerWon = game.checkWinningConditionLeg();//check if player won
 
 		if(playerWon){
@@ -847,5 +884,4 @@ function translateY(y) {
 	return y;
 }
 
-//init();
 buildOptions();

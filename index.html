@@ -8,47 +8,89 @@
     <script src='js/victor.min.js'></script>
     <script src="js/dartboard.js"></script>
     
-
     <title>Game on!</title>
 </head>
 <body onload='DartBoard().init();'>
     <header></header>
     <div id="container" class="container">
         <div id="gameOption">
-            <label for="playerName">Name:</label>
-            <input type="text" id="playerName" />
+            <div>
+                <span>
+                    <label for="playerName">Name:</label>
+                    <input type="text" id="playerName" size="10"/>
+                </span>
+                <span>
+                    <label for="games">Games:</label>
+                    <select name="games" id="games"></select>
+                </span>
+            </div>
             
-            <select name="games" id="games"></select>
-
-            <select name="gameLength" id="gameLength"></select>
-
-            <select name="gameDifficulty" id="gameDifficulty"></select>
-            
-            <button id="start" onclick="checkFields()">Game on!</button>
+            <div>
+                <span>
+                    <label for="gameLength">Legs:</label>
+                    <select name="gameLength" id="gameLength"></select>
+                </span>
+                <span>
+                    <label for="gameDifficulty">Difficulty:</label>
+                    <select name="gameDifficulty" id="gameDifficulty"></select>
+                </span>
+                <span>
+                    <button id="start" onclick="checkFields()">Game on!</button>
+                </span>
+            </div>
         </div>
         <div id="gameArea">
             <div id="contentLeft" class="content">
-                <span class="notVisible" id="playerCurrentPlayer">&#9654;</span><p id="player"></p>
+                <span class="notVisible" id="playerCurrentPlayer">&#9654; </span><span id="player"></span>
                 <div id="playerScores">
-                    <label for="playerScore">Score:</label>
-                    <p id="playerScore"></p>
-                    <label for=playerLeg">Legs:</label>
-                    <p id="playerLeg">0</p>
+                    <div>
+                        <label for="playerScore">Score:</label>
+                        <span id="playerScore"></span>
+                    </div>
+                    <div>
+                        <label for="playerThrow">Throw:</label>
+                        <span id="playerThrow"></span>
+                    </div>
+                    <div>
+                        <label for=playerLeg">Legs:</label>
+                        <span id="playerLeg">0</span>
+                    </div>
+                    <div>
+                        <label for=playerDarts>Dart:</label>
+                        <span id="playerDarts"></span>
+                    </div>
+                    <div>
+                        <label id="playerMessage"></label>
+                    </div>
                 </div>
             </div>
             
             <div id="contentCenter" class="content">
-                <p>Canvas will be here</p>
                 <canvas id ="canvas" width="370" height="370"></canvas>
             </div>
             
             <div id="contentRight" class="content">
-                <span class="notVisible" id="computerCurrentPlayer">&#9654;</span><p id="computer"></p>
+                <span class="notVisible" id="computerCurrentPlayer">&#9654; </span><span id="computer"></span>
                 <div id="computerScores">
-                    <label for="computerScore">Score:</label>
-                    <p id="computerScore"></p>
-                    <label for=computerLeg">Legs:</label>
-                    <p id="computerLeg">0</p>
+                    <div>
+                        <label for="computerScore">Score:</label>
+                        <span id="computerScore"></span>
+                    </div>
+                    <div>
+                        <label for="computerThrow">Throw:</label>
+                        <span id="computerThrow"></span>
+                    </div>
+                    <div>
+                        <label for=computerLeg">Legs:</label>
+                        <span id="computerLeg">0</span>
+                    </div>
+                    <div>
+                        <label for=computerDarts>Dart: </label>
+                        <span id="computerDarts"></span>
+                    </div>
+                    <div>
+                        <label id="computerMessage"></label>
+                    </div>
                 </div>
             </div>
         </div>

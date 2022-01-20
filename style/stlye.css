@@ -16,6 +16,25 @@
     margin: 0 auto;
 }
 
+#gameOption{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin: 1rem auto 3rem auto;
+    width: 38rem;
+}
+
+#gameOption > div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    margin-bottom: 1rem;
+}
+
+#games{
+    width: 12rem;
+}
+
 #contentLeft{
     border: 1px solid red;
     width: 8rem;
