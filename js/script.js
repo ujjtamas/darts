@@ -865,8 +865,6 @@ function getPosition(event){
     let x = new Number();
 	let y = new Number();
 	
-	//let canvas = document.getElementById('canvas');
-	
 	//Get the x and y relative to the canvas
 	//Deal with weird behavior when you scroll the page
 	x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
