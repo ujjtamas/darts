@@ -2,7 +2,7 @@
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 let dbImage = new Image();
-dbImage.src = '/image/Dartboard_360.png';
+dbImage.src = './image/Dartboard_360.png';
 let canvasWidth = canvas.width;
 let canvasHeight = canvas.height;
 let boardPosX = (canvasWidth-dbImage.width)/2
@@ -10,7 +10,7 @@ let boardPosY = (canvasHeight-dbImage.height)/2
 
 window.onload = () => {
 	let dbImage = new Image();
-	dbImage.src = '/image/Dartboard_360.png';
+	dbImage.src = './image/Dartboard_360.png';
 	dbImage.onload = function(){
 		ctx.drawImage(dbImage,boardPosX,boardPosY);
 	}
