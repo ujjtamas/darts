@@ -1,6 +1,20 @@
 //Create canvas
 let canvas = document.getElementById('canvas');
-//let ctx = canvas.getContext('2d');
+let ctx = canvas.getContext('2d');
+let dbImage = new Image();
+dbImage.src = '/image/Dartboard_360.png';
+let canvasWidth = canvas.width;
+let canvasHeight = canvas.height;
+let boardPosX = (canvasWidth-dbImage.width)/2
+let boardPosY = (canvasHeight-dbImage.height)/2
+
+window.onload = () => {
+	let dbImage = new Image();
+	dbImage.src = '/image/Dartboard_360.png';
+	dbImage.onload = function(){
+		ctx.drawImage(dbImage,boardPosX,boardPosY);
+	}
+}
 const scaleFactor = 1;
 
 const dartBoard = {};
@@ -35,7 +49,7 @@ dartBoard.sections = {
 	1 : dartBoard.secStarting - dartBoard.secWidth
 }
 
-dartBoard.heightPx = 360;
+dartBoard.heightPx = dbImage.width;
 
 //Dartboard physical dimensions
 dartBoard.ringWidthDT = 8;
@@ -351,7 +365,7 @@ class Game{
 		for(let i = 0;i < this.games.length; i++){
 			if(this.games[i].name.toString() === this.selectedGame.toString()){
 				this.currentWinningConditionLeg = this.games[i].winningCondition;
-				console.log('Leg winning condition found and set');
+				//console.log('Leg winning condition found and set');
 			}
 		}
 	}
@@ -360,7 +374,7 @@ class Game{
 		for(let i = 0;i < this.gameLength.length; i++){
 			if(this.gameLength[i].code.toString() === this.selectedLengthCode.toString()){
 				this.currentWinningConditionGame = Number(this.gameLength[i].win);
-				console.log('Game winning condition found and set');
+				//console.log('Game winning condition found and set');
 			}
 		}
 	}
@@ -376,7 +390,8 @@ class Game{
 		if(this.currentWinningConditionLeg == 'firstTo0DoubleOut'){
 			let throws = this.currentPlayer.scores.length;
 			throws = throws > 0 ? --throws : throws;
-			if(Number(this.currentPlayer.currentScore) === 0 && this.currentPlayer.scores[throws].std.toString() === 'double'){
+			
+			if(Number(this.currentPlayer.currentScore) === 0 && (this.currentPlayer.scores[throws].std.toString() === 'double' || this.currentPlayer.scores[throws].std.toString() === 'bullsEye')){
 				return true
 			}
 		}
@@ -396,7 +411,7 @@ class Game{
 	newLeg(){
 		this.currentLeg++;
 		this.currentRound = 0;
-		console.log('New leg started');
+		//console.log('New leg started');
 		//swap the starting players
 		if(this.startingPlayer === this.currentPlayer){
 			this.startingPlayer =  this.nextPlayer;
@@ -515,7 +530,7 @@ class Player{
 			if(game.selectedGame.toString().indexOf('double out') > -1){
 				//check if last throw was double
 				if(resultToBe === 0){
-					if(score.std.toString() === 'double'){
+					if(score.std.toString() === 'double' || score.std.toString() === 'bullsEye'){
 						return true;
 					}
 					return false;
@@ -574,13 +589,29 @@ class Player{
 			this.id = this.name === 'Computer' ? 'computer' : 'player';
 		}
 		this.updateHTML(document.getElementById(this.id), this.name);
-		
+		this.updateHTML(document.getElementById(player.id + 'Game'),'');
+
 		this.initScores();
 	}
 
-	updateHTML(element,value){
-		element.value = value;
-		element.innerHTML = value;
+	updateHTML(element,value,concat){
+		
+		if(element.id == 'computerThrow' || element.id == 'playerThrow'){
+			if(this.currentDart === 1){
+				concat = false;
+			}
+		}
+
+		if(!concat){
+			element.value = value;
+			element.innerHTML = value;
+		}
+
+		let separator = this.currentDart <= 3 ? ', ' : '';
+		if(concat){
+			element.value += separator + value;
+			element.innerHTML += separator + value;
+		}
 	}
 
 	updateCurrentPlayerIndicator(){
@@ -665,14 +696,17 @@ function checkFields(){
 function throwDart(event){
 
 	let coords = getPosition(event);
-	let x = coords[0];
-	let y = coords[1];
-	
+	let x = coords[2];
+	let y = coords[3];
+	let xDraw = coords[0];
+	let yDraw = coords[1];
+
 	let offset = setOffsetForPlayer();
 
 	x += offset;
-	y+= offset;
-	convertCoordToLD(x,y)
+	y += offset;
+	
+	convertCoordToLD(x,y,xDraw,yDraw);
 }
 
 //Adds random offest to player's throw to make it more diffcult
@@ -692,14 +726,36 @@ function generateThrowsForComputer(){
 	let randomXPoint = Math.random() * selectedFrame - selectedFrame/2
 	let randomYPoint = Math.random() * selectedFrame - selectedFrame/2
 	
+	let xTR = new Number();
+	let yTr = new Number();
+
 	randomXPoint += centerPoint.x;
 	randomYPoint += centerPoint.y;
+	
+	let canvasCoord = translateToCanvas(randomXPoint,randomYPoint);
+	
+	xTr = canvasCoord[0];
+	yTr = canvasCoord[1];
+	
 	setTimeout(function (){
-		convertCoordToLD(randomXPoint,randomYPoint)
+		convertCoordToLD(randomXPoint,randomYPoint,xTr,yTr)
 	},1000);
 }
 
-//Gets the center point for the throw generated for the computer
+//Translate positions calculated for computer (based from the centerpoint) to actual positions on canvas
+function translateToCanvas(x,y){
+	if(x){
+		x += canvasWidth/2;
+	}
+
+	if(y){
+		y = (canvasHeight/2)-y;
+	}
+
+	return [x,y];
+}
+
+//Gets the center point (Hardcoded) for the throw generated for the computer
 function getCenterPoint(){
 	let point ={
 		'x': 0,
@@ -732,7 +788,7 @@ function getCenterPoint(){
 }
 
 //Convert coordinates to relative distance (length) and degree to center point
-function convertCoordToLD(x,y){
+function convertCoordToLD(x,y,xDraw,yDraw){
 	let correction = 0;
 	correction = x <= 0 ? Math.PI : 0;
 	if(x > 0 && y < 0){
@@ -742,11 +798,11 @@ function convertCoordToLD(x,y){
 	let degree = Math.atan((0-y)/(0-x));
 	degree += correction;
 
-	getSection(l,degree);
+	getSection(l,degree,xDraw,yDraw);
 }
 
 //Get the section clicked on
-function getSection(l,degree){
+function getSection(l,degree,xDraw,yDraw){
 
 	let max = 0;
 	let section = {
@@ -781,7 +837,7 @@ function getSection(l,degree){
 		section.section = 0;
 	}
 
-	if(section.std !== 'bullsEye' && section.std !== 'bulls' && 	section.std !== 'out'){
+	if(section.std !== 'bullsEye' && section.std !== 'bulls' && section.std !== 'out'){
 		for(i in dartBoard.sections){
 			if(degree >= dartBoard.sections[i]){
 				if(dartBoard.sections[i]>max){
@@ -800,11 +856,11 @@ function getSection(l,degree){
 	}
 
 	//console.log('hit: ' + JSON.stringify(section));
-	gamePlay(section);
+	gamePlay(section,xDraw,yDraw);
 }
 
 //update gameplay, core function of gameplay
-function gamePlay(section){
+function gamePlay(section,xDraw,yDraw){
 	section['leg'] = game.currentLeg;
 	section['round'] = game.currentRound;
 	section['dart'] = game.currentPlayer.dart;
@@ -829,20 +885,27 @@ function gamePlay(section){
 		game.currentPlayer.updateHTML(document.getElementById(game.currentPlayer.id + "Darts"),game.currentPlayer.dart);
 		
 		let updateValue = Number(section.score) == 0 ? section.std : section.score;
-		game.currentPlayer.updateHTML(document.getElementById(game.currentPlayer.id + "Throw"), updateValue);
+		updateValue = updateValue.toString().indexOf('Wire') > -1 ? 'Wire' : updateValue;
+		game.currentPlayer.updateHTML(document.getElementById(game.currentPlayer.id + "Throw"), updateValue,true);
+
+		if(updateValue != 'Wire'){
+			draw(xDraw,yDraw);
+		}
 		//console.log('Leg: ' + game.currentLeg + ', Round: ' + game.currentRound + ' Score: ' + game.currentPlayer.currentScore +' Throw: ' + game.currentPlayer.currentDart + ' name: ' + game.currentPlayer.name + ' dart: ' + game.currentPlayer.dart);
 
 		let playerWon = game.checkWinningConditionLeg();//check if player won
 
 		if(playerWon){
 			game.currentPlayer.legWin();
-			console.log(game.currentPlayer.name + ' win legs: ' + game.currentPlayer.legsWon);
 			game.checkWinningConditionGame();
 			game.newLeg();
-			
+			setTimeout( function(){
+				reDrawCanvas();},1000);
 		}
 		//Push player's scores to game scores
 		else if(game.currentPlayer.currentDart === 3 || section.busted){
+			setTimeout( function(){
+				reDrawCanvas();},1000);
 			game.updateCurrentPlayer();
 		}
 		else if(game.currentPlayer.id === 'computer'){
@@ -864,23 +927,21 @@ function bounceOut(section){
 function getPosition(event){
     let x = new Number();
 	let y = new Number();
-	
+	let xTr = new Number();
+	let yTR = new Number();
 	//Get the x and y relative to the canvas
 	//Deal with weird behavior when you scroll the page
 	x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
 	y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
 	
-	//console.log(document.body.scrollLeft);
-	
 	//Get default canvas location 
 	x -= canvas.offsetLeft;
 	y -= canvas.offsetTop;
-	
 	//Translate the coordinate system
-	x = translateX(x);
-	y = translateY(y);
+	xTr = translateX(x);
+	yTr = translateY(y);
 	
-	var coords = [x,y];
+	var coords = [x,y,xTr,yTr];
 	
 	return coords;
 }
@@ -902,4 +963,16 @@ function translateY(y) {
 	return y;
 }
 
+function draw(xDraw,yDraw){
+	ctx.fillStyle = "#FF0000";
+	ctx.beginPath();
+	ctx.arc(xDraw,yDraw, 5, 0, 2 * Math.PI, true);
+	ctx.fill();
+	ctx.closePath();
+}
+
+function reDrawCanvas(){
+	ctx.clearRect(0,0,canvas.width,canvas.height);
+	ctx.drawImage(dbImage,boardPosX,boardPosY);
+}
 buildOptions();

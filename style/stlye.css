@@ -82,3 +82,12 @@
 .designIn > option{
     background: rgb(20, 113, 15);
 }
+
+.topMargin{
+    margin-top: 1rem;
+}
+
+.smallFont{
+    font-size: 0.6rem;
+    margin: auto 0rem;
+}

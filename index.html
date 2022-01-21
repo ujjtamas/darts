@@ -5,12 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style/stlye.css" />
-    <script src='js/victor.min.js'></script>
-    <script src="js/dartboard.js"></script>
-    
     <title>Game on!</title>
 </head>
-<body onload='DartBoard().init();'>
+<body>
     <header></header>
     <div id="container" class="container">
         <div id="gameOption">
@@ -53,10 +50,10 @@
                     </div>
                     <div class="design width80">
                         <label for="playerThrow">Throw: </label>
-                        <span id="playerThrow"></span>
+                        <span id="playerThrow" class="smallFont"></span>
                     </div>
-                    <div class="design width80">
-                        <label for="playerGame">Games: </label>
+                    <div class="design width80 topMargin">
+                        <label for="playerGame">Sets: </label>
                         <span id="playerGame"></span>
                     </div>
                     <div class="design width80">
@@ -74,7 +71,7 @@
             </div>
             
             <div id="contentCenter" class="content">
-                <canvas id ="canvas" width="370" height="370"></canvas>
+                <canvas id ="canvas" width="425" height="425"></canvas>
             </div>
             
             <div id="contentRight" class="content">
@@ -90,10 +87,10 @@
                     </div>
                     <div class="design width80">
                         <label for="computerThrow">Throw: </label>
-                        <span id="computerThrow"></span>
+                        <span id="computerThrow" class="smallFont"></span>
                     </div>
-                    <div class="design width80">
-                        <label for="computerGame">Games: </label>
+                    <div class="design width80 topMargin">
+                        <label for="computerGame">Sets: </label>
                         <span id="computerGame"></span>
                     </div>
                     <div class="design width80">
