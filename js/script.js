@@ -17,6 +17,7 @@ window.onload = () => {
 }
 const scaleFactor = 1;
 
+//Dartboard constant for storing real physical life dartboard properties and calculated ones for the game
 const dartBoard = {};
 
 //Dartboard, one section dimension
@@ -183,6 +184,7 @@ const availableGameLength = [
 	},
 ];
 
+//Available game difficulty, factor used for calculating uncertainty in throws
 const availableGameDifficulty =[
 	{
 		'name' : 'hard',
@@ -314,6 +316,7 @@ const centerPoints = [
 }
 ]
 
+//Game class
 class Game{
 	constructor(selectedGame,selectedLength,selectedDifficulty,startingPlayer,nextPlayer){
 		this.selectedGame = selectedGame;
@@ -457,6 +460,7 @@ class Game{
 	}
 }
 
+//Player class
 class Player{
 	constructor(name){
 		this.name = name;
@@ -625,6 +629,17 @@ class Player{
 	updateStatistics(){}
 }
 
+//Check if name field is filled out
+function checkFields(){
+	let nameField = document.getElementById('playerName');
+	if(nameField.value == ''){
+		alert('Please fill out the name field');
+	}
+	else{
+		init();
+	}
+}
+
 //Initialize the game
 function init(){
 	buildPlayer();
@@ -678,17 +693,6 @@ function buildOptionsHTML(array,parent,elementToAdd,innerHTMLValue,valueValue,se
 			child.setAttribute('selected','selected');
 		}
 		parent.appendChild(child);
-	}
-}
-
-//Check if name field is filled out
-function checkFields(){
-	let nameField = document.getElementById('playerName');
-	if(nameField.value == ''){
-		alert('Please fill out the name field');
-	}
-	else{
-		init();
 	}
 }
 
@@ -963,6 +967,7 @@ function translateY(y) {
 	return y;
 }
 
+//draw the darts
 function draw(xDraw,yDraw){
 	ctx.fillStyle = "#FF0000";
 	ctx.beginPath();
@@ -971,8 +976,11 @@ function draw(xDraw,yDraw){
 	ctx.closePath();
 }
 
+//redraw the canvas
 function reDrawCanvas(){
 	ctx.clearRect(0,0,canvas.width,canvas.height);
 	ctx.drawImage(dbImage,boardPosX,boardPosY);
 }
+
+//build options for dropdown for player
 buildOptions();
