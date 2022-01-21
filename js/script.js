@@ -209,6 +209,9 @@ const frameSizeForComputer = 15;
 //Initialized framesize for difficulty, the bigger the number the more difficult the game, finetune with availableGameDifficulty
 const frameSizeForPlayer = 5;
 
+//Delay from computer throw in milliseconds
+const computerThrowDelay = 1500
+
 //Center points for computer throws, always have it decremental order by score field
 const centerPoints = [
 	{
@@ -247,6 +250,69 @@ const centerPoints = [
 		'yDO' : -38
 	},
 	{
+		'score' : 19,
+		'xSO' : -31,
+		'ySO' : -105,
+		'xDO' : 33,
+		'yDO' : 105
+	},
+	{
+		'score' : 18,
+		'xSO' : 60,
+		'ySO' : 88,
+		'xDO' : -105,
+		'yDO' : 79
+	},
+	{
+		'score' : 17,
+		'xSO' : 38,
+		'ySO' : -103,
+		'xDO' : 33,
+		'yDO' : 105
+	},
+	{
+		'score' : 16,
+		'xSO' : -83,
+		'ySO' : -64,
+		'xDO' : -126,
+		'yDO' : -42
+	},
+	{
+		'score' : 15,
+		'xSO' : 87,
+		'ySO' : -61,
+		'xDO' : -60,
+		'yDO' : -87
+	},
+	{
+		'score' : 14,
+		'xSO' : -104,
+		'ySO' : 32,
+		'xDO' : -76,
+		'yDO' : -106
+	},
+	{
+		'score' : 13,
+		'xSO' : 98,
+		'ySO' : 35,
+		'xDO' : -36,
+		'yDO' : 102
+	},
+	{
+		'score' : 12,
+		'xSO' : -62,
+		'ySO' : 89,
+		'xDO' : 135,
+		'yDO' : 0
+	},
+	{
+		'score' : 11,
+		'xSO' : -108,
+		'ySO' : 0,
+		'xDO' : 0,
+		'yDO' : -108
+	},
+	{
 		'score' : 10,
 		'xSO' : 107,
 		'ySO' : -36,
@@ -279,7 +345,7 @@ const centerPoints = [
 		'xSO' : 110,	
 		'ySO' : 1,
 		'xDO' : -1,
-		'yDO' : 132
+		'yDO' : -132
 	},
 	{
 		'score' : 5,
@@ -306,8 +372,8 @@ const centerPoints = [
 		'score' : 2,
 		'xSO' : 61,
 		'ySO' : -85,
-		'xDO' : 83,
-		'yDO' : -106
+		'xDO' : 53,
+		'yDO' : 116
 	},
 	{
 		'score' : 1,
@@ -743,7 +809,7 @@ function generateThrowsForComputer(){
 	
 	setTimeout(function (){
 		convertCoordToLD(randomXPoint,randomYPoint,xTr,yTr)
-	},1000);
+	},computerThrowDelay);
 }
 
 //Translate positions calculated for computer (based from the centerpoint) to actual positions on canvas
